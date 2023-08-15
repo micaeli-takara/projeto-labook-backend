@@ -82,7 +82,7 @@ export class PostDatabase extends BaseDatabase {
 
     public findLikeDislike = async (likeDislikeDB: LikeDislikeDB): Promise<POST_LIKE | undefined> => {
 
-        const [result] = await BaseDatabase
+        const [result]: Array <LikeDislikeDB | undefined> = await BaseDatabase
         .connection(PostDatabase.TABLE_LIKES_DISLIKES)
         .select()
         .where({
@@ -90,7 +90,13 @@ export class PostDatabase extends BaseDatabase {
             post_id: likeDislikeDB.post_id
         })
 
-        return result as POST_LIKE | undefined
+        if(result === undefined) {
+            return undefined
+        } else if (result.like === 1) {
+            return POST_LIKE.ON_LIKED
+        } else {
+            return POST_LIKE.ON_DISLIKED
+        }
     }
 
     public removeLikeDislike = async (likeDislikeDB: LikeDislikeDB): Promise<void> => {
